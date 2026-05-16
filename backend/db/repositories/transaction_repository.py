@@ -55,11 +55,18 @@ class TransactionRepository(BaseRepository[Transaction]):
 
     def get_summary_by_month(self, year_month: str) -> dict:
         from backend.models.transaction import TransactionType
+        from sqlalchemy import extract
+        
+        year, month = year_month.split("-")
+        
         query = self.db.query(
             Transaction.type,
             func.sum(Transaction.amount).label("total"),
             func.count(Transaction.id).label("count"),
-        ).filter(Transaction.date.like(f"{year_month}%"))
+        ).filter(
+            extract("year", Transaction.date) == int(year),
+            extract("month", Transaction.date) == int(month),
+        )
 
         if self.current_user:
             query = query.filter(Transaction.user_id == self.current_user.id)
@@ -72,6 +79,8 @@ class TransactionRepository(BaseRepository[Transaction]):
 
     def get_expense_by_category(self, year_month: Optional[str] = None) -> list[dict]:
         from backend.models.transaction import TransactionType
+        from sqlalchemy import extract
+
         query = (
             self.db.query(
                 Category.id, Category.name, Category.emoji,
@@ -83,7 +92,11 @@ class TransactionRepository(BaseRepository[Transaction]):
         if self.current_user:
             query = query.filter(Transaction.user_id == self.current_user.id)
         if year_month:
-            query = query.filter(Transaction.date.like(f"{year_month}%"))
+            year, month = year_month.split("-")
+            query = query.filter(
+                extract("year", Transaction.date) == int(year),
+                extract("month", Transaction.date) == int(month),
+            )
         rows = query.group_by(
             Category.id, Category.name, Category.emoji, Category.color
         ).order_by(func.sum(Transaction.amount).desc()).all()
