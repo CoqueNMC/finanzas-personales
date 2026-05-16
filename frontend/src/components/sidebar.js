@@ -35,10 +35,12 @@ export class Sidebar {
       try {
         const controller = new AbortController();
         const timeout = setTimeout(() => controller.abort(), 3000); // 3s timeout
-  
-        const res = await fetch("http://localhost:8000/api/health", {
-          signal: controller.signal
-        });
+        const apiBase = window.location.hostname === "localhost"
+          ? "http://localhost:8000"
+          : "https://finanzas-personales-uzs9.onrender.com";
+          const res = await fetch(`${apiBase}/api/health`, {
+            signal: controller.signal
+          });
         clearTimeout(timeout);
   
         const h = await res.json();
