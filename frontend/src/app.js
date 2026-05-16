@@ -10,8 +10,10 @@ const BASE_PATH = window.location.hostname === "localhost"
 // Verificar autenticación
 const token = sessionStorage.getItem("auth_token");
 if (!token) {
-  window.location.href = "${BASE_PATH}/login.html";
+  window.location.href = `${BASE_PATH}/login.html`;
+  throw new Error("No autenticado");
 }
+
 import { Sidebar }          from "./components/sidebar.js";
 import { ChartsManager }    from "./pages/charts.js";
 import { DashboardPage }    from "./pages/dashboard.js";
@@ -125,7 +127,7 @@ if (authUser.name) {
 window.doLogout = () => {
   sessionStorage.removeItem("auth_token");
   sessionStorage.removeItem("auth_user");
-  window.location.href = "${BASE_PATH}/login.html";
+  window.location.href = `${BASE_PATH}/login.html`;
 };
 
 // Exponer globalmente para acceso desde componentes

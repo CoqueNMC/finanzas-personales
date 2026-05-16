@@ -19,10 +19,12 @@ async function request(method, path, body = null) {
   const res = await fetch(`${BASE_URL}${path}`, opts);
 
   if (res.status === 401) {
-    // Token expirado o inválido — redirigir al login
     sessionStorage.removeItem("auth_token");
     sessionStorage.removeItem("auth_user");
-    window.location.href = "/login.html";
+    const basePath = window.location.hostname === "localhost" 
+      ? "" 
+      : "/finanzas-personales";
+    window.location.href = `${basePath}/login.html`;
     return;
   }
 
