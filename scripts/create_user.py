@@ -1,3 +1,17 @@
+"""
+Crea un usuario directamente en la BD sin necesitar registro abierto.
+Ejecutar: python scripts/create_user.py --email tu@email.com --name "Tu Nombre" --password "tuPassword123"
+"""
+import sys, os, argparse
+sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
+
+from backend.db.connection import SessionLocal
+from backend.models import User
+from backend.services.id_service import generate_id
+from passlib.context import CryptContext
+
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+
 def create_user(email: str, name: str, password: str, admin: bool = False):
     db = SessionLocal()
     try:
@@ -59,3 +73,17 @@ def _seed_categories(db, user_id: str):
         )
         db.add(cat)
     db.flush()
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description="Crear usuario en Finanzas Personales")
+    parser.add_argument("--email",    required=True, help="Email del usuario")
+    parser.add_argument("--name",     required=True, help="Nombre del usuario")
+    parser.add_argument("--password", required=True, help="Contraseña (mín. 6 caracteres)")
+    parser.add_argument("--admin",    action="store_true", help="Crear como administrador")
+    args = parser.parse_args()
+
+    if len(args.password) < 6:
+        print("❌ La contraseña debe tener al menos 6 caracteres")
+        sys.exit(1)
+
+    create_user(args.email, args.name, args.password, args.admin)
