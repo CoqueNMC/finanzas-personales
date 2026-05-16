@@ -4,7 +4,9 @@
  * Cambiar BASE_URL aquí si el backend cambia de host/puerto.
  */
 
-const BASE_URL = "http://localhost:8000/api/v1";
+const BASE_URL = window.location.hostname === "localhost"
+  ? "http://localhost:8000/api/v1"
+  : "https://finanzas-personales-uzs9.onrender.com/api/v1";
 
 async function request(method, path, body = null) {
   const token = sessionStorage.getItem("auth_token");
