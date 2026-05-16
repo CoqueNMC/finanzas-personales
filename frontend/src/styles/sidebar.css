@@ -1,0 +1,21 @@
+.sidebar { width:var(--sidebar-w);min-width:var(--sidebar-w);background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column;height:100vh;position:sticky;top:0; }
+.sidebar-logo { padding:24px 20px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px; }
+.logo-icon { width:34px;height:34px;background:var(--accent);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px; }
+.logo-text { font-family:var(--font-display);font-weight:700;font-size:16px;letter-spacing:-.3px; }
+.logo-sub { font-size:11px;color:var(--text3); }
+.sidebar-section { padding:16px 12px 8px;font-size:10px;font-weight:600;letter-spacing:.1em;color:var(--text3);text-transform:uppercase; }
+.nav-item { display:flex;align-items:center;gap:10px;padding:9px 12px;margin:1px 8px;border-radius:var(--radius-sm);cursor:pointer;font-size:14px;color:var(--text2);transition:all .15s;user-select:none; }
+.nav-item:hover { background:var(--bg3);color:var(--text); }
+.nav-item.active { background:var(--accent-dim);color:var(--accent2);font-weight:500; }
+.nav-icon { font-size:15px;width:20px;text-align:center;flex-shrink:0; }
+.nav-badge { margin-left:auto;font-size:10px;background:var(--accent-dim);color:var(--accent2);padding:2px 7px;border-radius:20px;font-weight:600; }
+.sidebar-footer { margin-top:auto;padding:14px 16px;border-top:1px solid var(--border);font-size:11px;color:var(--text3);display:flex;flex-direction:column;gap:6px; }
+.status-row { display:flex;align-items:center;gap:6px; }
+.status-dot { width:7px;height:7px;border-radius:50%;background:var(--text3);flex-shrink:0;transition:background .3s; }
+.status-dot.ok { background:var(--green); }
+.status-dot.err { background:var(--red); }
+.status-dot.loading { background:var(--amber);animation:pulse 1s infinite; }
+@keyframes pulse { 0%,100%{opacity:1}50%{opacity:.3} }
+.sidebar-actions { display:flex;gap:6px;flex-wrap:wrap; }
+.sidebar-btn { font-size:10px;padding:4px 9px;border-radius:5px;border:1px solid var(--border2);background:transparent;color:var(--text3);cursor:pointer;font-family:var(--font-body);transition:all .15s; }
+.sidebar-btn:hover { background:var(--bg3);color:var(--text); }

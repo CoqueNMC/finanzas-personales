@@ -1,0 +1,10 @@
+.overlay { position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:100;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(4px);opacity:0;pointer-events:none;transition:opacity .2s; }
+.overlay.open { opacity:1;pointer-events:all; }
+.modal { background:var(--bg2);border:1px solid var(--border2);border-radius:18px;padding:28px;width:480px;max-width:95vw;transform:translateY(20px);transition:transform .2s;max-height:90vh;overflow-y:auto; }
+.overlay.open .modal { transform:translateY(0); }
+.modal-title { font-family:var(--font-display);font-size:17px;font-weight:700;margin-bottom:20px; }
+.modal-actions { display:flex;gap:10px;justify-content:flex-end;margin-top:20px; }
+.color-picker { display:flex;gap:8px;flex-wrap:wrap; }
+.color-opt { width:28px;height:28px;border-radius:50%;cursor:pointer;transition:transform .1s; }
+.color-opt:hover { transform:scale(1.15); }
+.color-opt.selected { outline:2.5px solid white;outline-offset:2px; }

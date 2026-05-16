@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Finanzas Personales</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <!-- Styles modulares -->
+  <link rel="stylesheet" href="src/styles/variables.css">
+  <link rel="stylesheet" href="src/styles/base.css">
+  <link rel="stylesheet" href="src/styles/components.css">
+  <link rel="stylesheet" href="src/styles/sidebar.css">
+  <link rel="stylesheet" href="src/styles/modal.css">
+  <link rel="stylesheet" href="src/styles/toast.css">
+</head>
+<body>
+
+<!-- ── SIDEBAR ── -->
+<nav class="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-icon">💰</div>
+    <div><div class="logo-text">Finanzas</div><div class="logo-sub">Personal</div></div>
+  </div>
+  <div class="sidebar-section">Principal</div>
+  <div class="nav-item active" data-page="dashboard"><span class="nav-icon">◈</span> Dashboard</div>
+  <div class="nav-item" data-page="accounts"><span class="nav-icon">◉</span> Cuentas</div>
+  <div class="sidebar-section">Movimientos</div>
+  <div class="nav-item" data-page="transactions"><span class="nav-icon">⇌</span> Transacciones <span class="nav-badge" id="tx-badge">0</span></div>
+  <div class="nav-item" data-page="charts"><span class="nav-icon">◬</span> Gráficas</div>
+  <div class="sidebar-section">Configuración</div>
+  <div class="nav-item" data-page="categories"><span class="nav-icon">◈</span> Categorías</div>
+  <div class="sidebar-footer">
+    <div class="status-row">
+      <div class="status-dot loading" id="api-dot"></div>
+      <span id="api-label">Verificando API...</span>
+    </div>
+  </div>
+  <div style="padding:12px 16px;border-top:1px solid var(--border);">
+    <div style="font-size:13px;font-weight:500;color:var(--text)" id="user-name"></div>
+    <div style="font-size:11px;color:var(--text3);margin-bottom:10px;" id="user-email"></div>
+    <div style="display:flex;gap:6px;">
+      <button class="sidebar-btn" onclick="navigate('profile')" style="flex:1;">👤 Perfil</button>
+      <button class="sidebar-btn" onclick="doLogout()" style="flex:1;">← Salir</button>
+    </div>
+  </div>
+</nav>
+
+<!-- ── MAIN ── -->
+<div class="main" style="flex:1;overflow:hidden;display:flex;flex-direction:column;">
+  <div class="topbar">
+    <div>
+      <div class="topbar-title" id="page-title">Dashboard</div>
+      <div class="topbar-sub" id="page-sub">Resumen financiero</div>
+    </div>
+    <div style="display:flex;gap:10px;align-items:center;">
+      <button class="btn-primary" id="topbar-action">+ Transacción</button>
+    </div>
+  </div>
+  <div class="content">
+    <!-- PROFILE -->
+    <div id="screen-profile" class="screen">
+      <div class="card" style="max-width:480px;">
+        <div class="section-title mb16">Cambiar contraseña</div>
+        <div class="form-group">
+          <label class="form-label">Contraseña actual</label>
+          <input class="form-input" type="password" id="cp-current" placeholder="••••••••">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Nueva contraseña</label>
+          <input class="form-input" type="password" id="cp-new" placeholder="Mínimo 6 caracteres">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Confirmar nueva contraseña</label>
+          <input class="form-input" type="password" id="cp-confirm" placeholder="Repite la nueva contraseña">
+        </div>
+        <button class="btn-primary" id="btn-change-password">Actualizar contraseña</button>
+      </div>
+    </div>
+    <!-- DASHBOARD -->
+    <div id="screen-dashboard" class="screen active">
+      <div class="grid-4 mb24" id="dash-stats"></div>
+      <div class="grid-2 mb24">
+        <div class="card">
+          <div class="section-header">
+            <span class="section-title">Ingresos vs Egresos</span>
+            <select class="filter-select" style="width:auto;padding:5px 10px;font-size:12px;" id="chart-months">
+              <option value="1" selected>Último mes</option>
+              <option value="3">3 meses</option>
+              <option value="6">6 meses</option>
+              <option value="12">12 meses</option>
+            </select>
+          </div>
+          <div class="chart-wrap"><canvas id="chart-incexp"></canvas></div>
+        </div>
+        <div class="card">
+          <div class="section-header"><span class="section-title">Distribución de egresos</span></div>
+          <div class="chart-wrap"><canvas id="chart-cats"></canvas></div>
+        </div>
+      </div>
+      <div class="grid-2">
+        <div class="card">
+          <div class="section-header">
+            <span class="section-title">Últimas transacciones</span>
+            <button class="btn-ghost" id="btn-ver-todas" style="font-size:12px;padding:5px 10px;")">Ver todas →</button>
+          </div>
+          <table class="tx-table" id="dash-recent"></table>
+        </div>
+        <div class="card">
+          <div class="section-header"><span class="section-title">Gastos por categoría (mes)</span></div>
+          <div id="dash-cat-bars"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ACCOUNTS -->
+    <div id="screen-accounts" class="screen">
+      <div class="grid-auto" id="accounts-grid"></div>
+    </div>
+
+    <!-- TRANSACTIONS -->
+    <div id="screen-transactions" class="screen">
+      <div class="filters">
+        <input class="filter-input" placeholder="Buscar descripción..." id="search-tx">
+        <select class="filter-select" id="filter-type">
+          <option value="">Todos los tipos</option>
+          <option value="income">Ingreso</option><option value="expense">Gasto efectivo</option>
+          <option value="expense_tc">Gasto TC</option><option value="transfer">Pago TC</option>
+          <option value="invest">Inversión</option><option value="withdraw">Retiro inversión</option>
+        </select>
+        <select class="filter-select" id="filter-account"><option value="">Todas las cuentas</option></select>
+        <select class="filter-select" id="filter-cat"><option value="">Todas las categorías</option></select>
+        <div class="date-range">
+          <input class="filter-select" type="date" id="filter-date-from" title="Desde">
+          <span>→</span>
+          <input class="filter-select" type="date" id="filter-date-to" title="Hasta">
+        </div>
+      </div>
+      <div class="card" style="padding:0;overflow:hidden;">
+        <table class="tx-table">
+          <thead><tr><th>Fecha</th><th>Descripción</th><th>Categoría</th><th>Cuenta</th><th>Tipo</th><th style="text-align:right">Valor</th><th></th></tr></thead>
+          <tbody id="tx-body"></tbody>
+        </table>
+      </div>
+      <div class="pagination">
+        <span id="tx-count-label"></span>
+        <div class="pag-btns">
+          <button class="btn-ghost" id="btn-prev">← Anterior</button>
+          <button class="btn-ghost" id="btn-next">Siguiente →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- CHARTS -->
+    <div id="screen-charts" class="screen">
+      <div class="grid-2 mb24">
+        <div class="card"><div class="section-header"><span class="section-title">Evolución mensual (12m)</span></div><div class="chart-wrap"><canvas id="chart-monthly"></canvas></div></div>
+        <div class="card"><div class="section-header"><span class="section-title">Balance neto por mes</span></div><div class="chart-wrap"><canvas id="chart-balance"></canvas></div></div>
+      </div>
+    </div>
+
+    <!-- CATEGORIES -->
+    <div id="screen-categories" class="screen">
+      <div class="section-header mb16">
+        <span class="section-title">Categorías</span>
+        <button class="btn-primary btn-open-cat" id="btn-new-cat">+ Nueva categoría</button>
+      </div>
+      <div class="grid-3" id="cat-grid"></div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ── MODAL TRANSACTION ── -->
+<div class="overlay" id="modal-tx">
+  <div class="modal">
+    <div class="modal-title" id="modal-tx-title">Nueva transacción</div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Tipo</label>
+        <select class="form-select" id="tx-tipo">
+          <option value="income">Ingreso</option><option value="expense">Gasto (efectivo)</option>
+          <option value="expense_tc">Gasto (TC)</option><option value="transfer">Pago TC</option>
+          <option value="invest">Invertir</option><option value="withdraw">Retiro inversión</option>
+        </select>
+      </div>
+      <div class="form-group"><label class="form-label">Fecha</label><input class="form-input" type="date" id="tx-fecha"></div>
+    </div>
+    <div class="form-group"><label class="form-label">Descripción</label><input class="form-input" type="text" id="tx-desc" placeholder="Ej: Almuerzo, Nómina..."></div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Cuenta origen</label><select class="form-select" id="tx-cuenta"></select></div>
+      <div class="form-group" id="tx-destino-group" style="display:none"><label class="form-label">Cuenta destino</label><select class="form-select" id="tx-destino"></select></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Categoría</label><select class="form-select" id="tx-cat"></select></div>
+      <div class="form-group"><label class="form-label">Valor (COP)</label><input class="form-input" type="number" id="tx-valor" placeholder="0" min="0"></div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-ghost" onclick="
+        document.getElementById('tx-cuenta').disabled = false;
+        document.getElementById('tx-destino').disabled = false;
+        document.getElementById('modal-tx').classList.remove('open');
+      ">Cancelar</button>
+      <button class="btn-primary" id="btn-save-tx">Guardar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── MODAL ACCOUNT ── -->
+<div class="overlay" id="modal-account">
+  <div class="modal">
+    <div class="modal-title" id="modal-acc-title">Nueva cuenta</div>
+    <div class="form-group"><label class="form-label">Nombre</label><input class="form-input" type="text" id="acc-name" placeholder="Ej: TC Visa 1234"></div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Tipo</label>
+        <select class="form-select" id="acc-type">
+          <option value="cash">Efectivo / Bolsillo</option><option value="credit">Tarjeta de crédito</option>
+          <option value="investment">Inversión</option><option value="savings">Ahorros</option><option value="other">Otro</option>
+        </select>
+      </div>
+      <div class="form-group"><label class="form-label">Emoji</label><input class="form-input" id="acc-emoji" placeholder="💰" maxlength="4"></div>
+    </div>
+    <div class="form-group"><label class="form-label">Color</label>
+      <div class="color-picker" id="acc-colors">
+        <div class="color-opt selected" data-color="#7c6aff" style="background:#7c6aff"></div>
+        <div class="color-opt" data-color="#22d48f" style="background:#22d48f"></div>
+        <div class="color-opt" data-color="#ff5e7a" style="background:#ff5e7a"></div>
+        <div class="color-opt" data-color="#ffad3b" style="background:#ffad3b"></div>
+        <div class="color-opt" data-color="#3b9eff" style="background:#3b9eff"></div>
+        <div class="color-opt" data-color="#ff7b54" style="background:#ff7b54"></div>
+        <div class="color-opt" data-color="#c084fc" style="background:#c084fc"></div>
+      </div>
+    </div>
+    <div class="form-group"><label class="form-label">Saldo inicial (COP)</label><input class="form-input" type="number" id="acc-balance" placeholder="0"></div>
+    <input type="hidden" id="acc-edit-id">
+    <div class="modal-actions">
+      <button class="btn-ghost" onclick="document.getElementById('modal-account').classList.remove('open')">Cancelar</button>
+      <button class="btn-primary" id="btn-save-account">Guardar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── MODAL CATEGORY ── -->
+<div class="overlay" id="modal-cat">
+  <div class="modal">
+    <div class="modal-title">Categoría</div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Nombre</label><input class="form-input" id="cat-name" placeholder="Ej: Alimentación"></div>
+      <div class="form-group"><label class="form-label">Emoji</label><input class="form-input" id="cat-emoji" placeholder="🍔" maxlength="4"></div>
+    </div>
+    <div class="form-group"><label class="form-label">Color</label>
+      <div class="color-picker" id="cat-colors">
+        <div class="color-opt selected" data-color="#22d48f" style="background:#22d48f"></div>
+        <div class="color-opt" data-color="#ff5e7a" style="background:#ff5e7a"></div>
+        <div class="color-opt" data-color="#ffad3b" style="background:#ffad3b"></div>
+        <div class="color-opt" data-color="#3b9eff" style="background:#3b9eff"></div>
+        <div class="color-opt" data-color="#7c6aff" style="background:#7c6aff"></div>
+        <div class="color-opt" data-color="#ff7b54" style="background:#ff7b54"></div>
+        <div class="color-opt" data-color="#c084fc" style="background:#c084fc"></div>
+        <div class="color-opt" data-color="#f472b6" style="background:#f472b6"></div>
+      </div>
+    </div>
+    <input type="hidden" id="cat-edit-id">
+    <div class="modal-actions">
+      <button class="btn-ghost" onclick="document.getElementById('modal-cat').classList.remove('open')">Cancelar</button>
+      <button class="btn-primary" id="btn-save-cat">Guardar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── ACCOUNT CARD STYLES (inline for accounts page specifics) ── -->
+<style>
+html, body {
+  height: 100%;
+  overflow: hidden;
+}
+.main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  min-height: 0;
+}
+.content {
+  flex: 1;
+  min-height: 0;
+  overflow-y: scroll;
+  padding: 28px 32px;
+}
+.topbar { padding:18px 32px; border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; background:var(--bg); }
+.topbar-title { font-family:var(--font-display); font-size:20px; font-weight:700; letter-spacing:-.4px; }
+.topbar-sub { font-size:13px; color:var(--text3); margin-top:1px; }
+.screen { display:none; }
+.screen.active { display:block; }
+.account-card { background:var(--bg2); border:1px solid var(--border); border-radius:var(--radius); padding:18px; transition:border-color .15s, transform .1s; }
+.account-card:hover { border-color:var(--border2); transform:translateY(-1px); }
+.account-card.new-card { border-style:dashed; display:flex; align-items:center; justify-content:center; gap:8px; color:var(--text3); min-height:130px; flex-direction:column; cursor:pointer; }
+.account-card.new-card:hover { color:var(--text2); border-color:var(--accent); }
+.account-emoji { font-size:28px; margin-bottom:10px; display:block; }
+.account-name { font-weight:500; font-size:14px; margin-bottom:2px; }
+.account-type { font-size:11px; color:var(--text3); margin-bottom:12px; }
+.account-balance { font-family:var(--font-display); font-size:20px; font-weight:700; }
+.account-balance.positive { color:var(--green); }
+.account-balance.negative { color:var(--red); }
+.account-actions { display:flex; gap:6px; margin-top:12px; }
+</style>
+
+<div class="toast" id="toast"></div>
+
+<!-- ES Modules: el navegador resuelve los imports automáticamente -->
+<script type="module" src="src/app.js"></script>
+</body>
+</html>
