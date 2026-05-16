@@ -3,10 +3,14 @@
  * Inicializa páginas y maneja la navegación.
  */
 
+const BASE_PATH = window.location.hostname === "localhost" 
+  ? "" 
+  : "/finanzas-personales";
+
 // Verificar autenticación
 const token = sessionStorage.getItem("auth_token");
 if (!token) {
-  window.location.href = "/login.html";
+  window.location.href = "${BASE_PATH}/login.html";
 }
 import { Sidebar }          from "./components/sidebar.js";
 import { ChartsManager }    from "./pages/charts.js";
@@ -121,7 +125,7 @@ if (authUser.name) {
 window.doLogout = () => {
   sessionStorage.removeItem("auth_token");
   sessionStorage.removeItem("auth_user");
-  window.location.href = "/login.html";
+  window.location.href = "${BASE_PATH}/login.html";
 };
 
 // Exponer globalmente para acceso desde componentes

@@ -121,6 +121,11 @@
 </div>
 
 <script type="module">
+
+const BASE_PATH = window.location.hostname === "localhost"
+  ? ""
+  : "/finanzas-personales";
+
 const BASE_URL = window.location.hostname === "localhost"
   ? "http://localhost:8000/api/v1"
   : "https://finanzas-personales-uzs9.onrender.com/api/v1";
@@ -172,7 +177,7 @@ window.doLogin = async () => {
     const data = await request("POST", "/auth/login/", { email, password });
     sessionStorage.setItem("auth_token", data.access_token);
     sessionStorage.setItem("auth_user", JSON.stringify(data.user));
-    window.location.href = "/index.html";
+    window.location.href = "${BASE_PATH}/index.html";
   } catch(e) {
     showError(e.message);
     btn.disabled = false; btn.textContent = "Iniciar sesión";
@@ -192,7 +197,7 @@ window.doRegister = async () => {
     const data = await request("POST", "/auth/register/", { name, email, password });
     sessionStorage.setItem("auth_token", data.access_token);
     sessionStorage.setItem("auth_user", JSON.stringify(data.user));
-    window.location.href = "/index.html";
+    window.location.href = "${BASE_PATH}/index.html";
   } catch(e) {
     if (e.message.includes("desactivado")) {
       document.getElementById("register-disabled").style.display = "";
@@ -232,7 +237,7 @@ window.doReset = async () => {
 
 // Verificar si ya está logueado
 if (sessionStorage.getItem("auth_token")) {
-  window.location.href = "/index.html";
+  window.location.href = "${BASE_PATH}/index.html";
 }
 
 // Verificar si viene con token de reset
