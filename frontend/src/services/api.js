@@ -49,8 +49,8 @@ export const api = {
   categories: {
     list:   ()           => request("GET",    "/categories/"),
     create: (data)       => request("POST",   "/categories/", data),
-    update: (id, data)   => request("PATCH",  `/categories/${id}`, data),
-    delete: (id)         => request("DELETE", `/categories/${id}`),
+    update: (id, data)   => request("PATCH",  `/categories/${id}/`, data),
+    delete: (id)         => request("DELETE", `/categories/${id}/`),
   },
 
   // ── Transactions ──────────────────────────────────────────────
