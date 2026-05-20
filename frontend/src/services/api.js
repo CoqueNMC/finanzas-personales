@@ -39,10 +39,10 @@ async function request(method, path, body = null) {
 export const api = {
   accounts: {
     list:   ()           => request("GET",    "/accounts/"),
-    get:    (id)         => request("GET",    `/accounts/${id}`),
+    get:    (id)         => request("GET",    `/accounts/${id}/`),
     create: (data)       => request("POST",   "/accounts/", data),
-    update: (id, data)   => request("PATCH",  `/accounts/${id}`, data),
-    delete: (id)         => request("DELETE", `/accounts/${id}`),
+    update: (id, data)   => request("PATCH",  `/accounts/${id}/`, data),
+    delete: (id)         => request("DELETE", `/accounts/${id}/`),
   },
 
   // ── Categories ────────────────────────────────────────────────
