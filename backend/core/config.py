@@ -16,6 +16,7 @@ class Settings(BaseSettings):
     app_port: int = 8000
     app_env: str = "development"
     app_secret_key: str = "dev-secret-key"
+    resend_api_key: str = ""
     allow_register: bool = False
     # CORS
     cors_origins: str = "http://localhost:3000"
