@@ -65,6 +65,8 @@ class TransactionService:
             to_account_id=tx.to_account_id, category_id=tx.category_id,
             account_name=tx.account.name if tx.account else None,
             account_emoji=tx.account.emoji if tx.account else None,
+            to_account_name=tx.to_account.name if tx.to_account else None,
+            to_account_emoji=tx.to_account.emoji if tx.to_account else None,
             category_name=tx.category.name if tx.category else None,
             category_emoji=tx.category.emoji if tx.category else None,
             category_color=tx.category.color if tx.category else None,

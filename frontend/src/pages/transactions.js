@@ -47,6 +47,7 @@ export class TransactionsPage {
           <td>${t.description}</td>
           <td><span class="cat-pill"><span class="tag-dot" style="background:${t.category_color ?? "#555"}"></span>${t.category_emoji ?? "📦"} ${t.category_name ?? "Varios"}</span></td>
           <td style="color:var(--text2)">${t.account_emoji ?? "❓"} ${t.account_name ?? "—"}</td>
+          <td style="color:var(--text2)">${t.to_account_id ? `${t.to_account_emoji ?? "❓"} ${t.to_account_name ?? "—"}` : ""}</td>
           <td>${txBadge(t.type)}</td>
           <td style="text-align:right;font-family:var(--font-display)">${txAmount(t.type, t.amount, fmt)}</td>
           <td style="display:flex;gap:6px;">

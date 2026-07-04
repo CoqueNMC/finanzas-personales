@@ -29,6 +29,7 @@ class TransactionCreate(TransactionBase):
             TransactionType.transfer,
             TransactionType.invest,
             TransactionType.withdraw,
+            TransactionType.move,
         )
         if needs_dest and not self.to_account_id:
             raise ValueError(f"to_account_id es requerido para tipo '{self.type}'")
@@ -49,6 +50,8 @@ class TransactionOut(TransactionBase):
     id: str
     account_name: Optional[str] = None
     account_emoji: Optional[str] = None
+    to_account_name: Optional[str] = None
+    to_account_emoji: Optional[str] = None
     category_name: Optional[str] = None
     category_emoji: Optional[str] = None
     category_color: Optional[str] = None
