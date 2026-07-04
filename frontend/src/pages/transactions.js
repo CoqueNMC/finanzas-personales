@@ -143,7 +143,7 @@ export class TransactionsPage {
     }
 
     // Cuenta destino
-    const needsDest = ["transfer", "invest", "withdraw", "move"].includes(tx-tipo);
+    const needsDest = ["transfer", "invest", "withdraw", "move"].includes(tx.type);
     document.getElementById("tx-destino-group").style.display = needsDest ? "" : "none";
 
     if (needsDest && tx.to_account_id) {
@@ -180,7 +180,7 @@ export class TransactionsPage {
       date:        document.getElementById("tx-fecha").value,
       type:        tipo,
       account_id:  cuentaSel.value || null,
-      to_account_id: ["transfer", "invest", "withdraw"].includes(tipo)
+      to_account_id: ["transfer", "invest", "withdraw", "move"].includes(tipo)
         ? destinoSel.value : null,
       category_id: document.getElementById("tx-cat").value || null,
     };
