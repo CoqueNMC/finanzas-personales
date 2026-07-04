@@ -94,7 +94,7 @@ export class TransactionsPage {
     document.getElementById("tx-tipo")?.addEventListener("change", () => {
       const t = document.getElementById("tx-tipo").value;
       document.getElementById("tx-destino-group").style.display =
-        ["transfer","invest","withdraw"].includes(t) ? "" : "none";
+        ["transfer","invest","withdraw", "move"].includes(t) ? "" : "none";
     });
     document.getElementById("btn-save-tx")?.addEventListener("click", () => this.save());
   }
@@ -143,7 +143,7 @@ export class TransactionsPage {
     }
 
     // Cuenta destino
-    const needsDest = ["transfer", "invest", "withdraw", "move"].includes(tipo);
+    const needsDest = ["transfer", "invest", "withdraw", "move"].includes(tx-tipo);
     document.getElementById("tx-destino-group").style.display = needsDest ? "" : "none";
 
     if (needsDest && tx.to_account_id) {
