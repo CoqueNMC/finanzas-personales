@@ -48,6 +48,7 @@ class AccountRepository(BaseRepository[Account]):
                             TransactionType.transfer,
                             TransactionType.invest,
                             TransactionType.withdraw,
+                            TransactionType.move,
                         ]) & (Transaction.to_account_id == account_id),
                         Transaction.amount,
                     ),
@@ -68,13 +69,13 @@ class AccountRepository(BaseRepository[Account]):
                             TransactionType.transfer,
                             TransactionType.invest,
                             TransactionType.withdraw,
+                            TransactionType.move,
                         ]) & (Transaction.account_id == account_id),
                         Transaction.amount,
                     ),
                     else_=0.0,
                 )
-            ), 0.0)
-        ).filter(
+            ), 0.0)).filter(
             (Transaction.account_id == account_id) |
             (Transaction.to_account_id == account_id)
         ).scalar()

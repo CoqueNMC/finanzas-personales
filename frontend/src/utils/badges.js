@@ -9,6 +9,7 @@ const TYPE_LABELS = {
   transfer:   ["transfer", "Pago TC"],
   invest:     ["invest",   "Inversión"],
   withdraw:   ["invest",   "Retiro inv."],
+  move:       ["transfer", "Traslado"],
 };
 
 export const txBadge = (type) => {

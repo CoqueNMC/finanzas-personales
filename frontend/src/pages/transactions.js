@@ -143,7 +143,7 @@ export class TransactionsPage {
     }
 
     // Cuenta destino
-    const needsDest = ["transfer", "invest", "withdraw"].includes(tx.type);
+    const needsDest = ["transfer", "invest", "withdraw", "move"].includes(tipo);
     document.getElementById("tx-destino-group").style.display = needsDest ? "" : "none";
 
     if (needsDest && tx.to_account_id) {
@@ -239,7 +239,7 @@ export class TransactionsPage {
 
   _onTipoChange() {
     const tipo = document.getElementById("tx-tipo").value;
-    const needsDest = ["transfer", "invest", "withdraw"].includes(tipo);
+    const needsDest = ["transfer", "invest", "withdraw", "move"].includes(tx.type);
     const forceEfectivo = ["income", "expense"].includes(tipo);
 
     document.getElementById("tx-destino-group").style.display = needsDest ? "" : "none";

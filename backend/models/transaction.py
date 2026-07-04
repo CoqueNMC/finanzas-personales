@@ -12,6 +12,7 @@ class TransactionType(str, enum.Enum):
     transfer = "transfer"
     invest = "invest"
     withdraw = "withdraw"
+    move = "move"
 
 
 class Transaction(Base):

@@ -10,7 +10,7 @@ class TransactionType(str, Enum):
     transfer = "transfer"
     invest = "invest"
     withdraw = "withdraw"
-
+    move = "move"
 
 class TransactionBase(BaseModel):
     description: str = Field(..., min_length=1, max_length=255)
