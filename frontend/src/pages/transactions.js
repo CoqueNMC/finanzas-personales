@@ -239,7 +239,7 @@ export class TransactionsPage {
 
   _onTipoChange() {
     const tipo = document.getElementById("tx-tipo").value;
-    const needsDest = ["transfer", "invest", "withdraw", "move"].includes(tx.type);
+    const needsDest = ["transfer", "invest", "withdraw", "move"].includes(tipo);
     const forceEfectivo = ["income", "expense"].includes(tipo);
 
     document.getElementById("tx-destino-group").style.display = needsDest ? "" : "none";
