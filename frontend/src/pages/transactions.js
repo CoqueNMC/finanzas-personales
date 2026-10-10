@@ -1,5 +1,5 @@
 import { api } from "../services/api.js";
-import { fmt } from "../utils/formatters.js";
+import { fmt, localISODate } from "../utils/formatters.js";
 import { txBadge, txAmount } from "../utils/badges.js";
 import { toast } from "../components/toast.js";
 import { modal } from "../components/modal.js";
@@ -50,12 +50,12 @@ export class TransactionsPage {
           <td style="color:var(--text2)">${t.to_account_id ? `${t.to_account_emoji ?? "❓"} ${t.to_account_name ?? "—"}` : ""}</td>
           <td>${txBadge(t.type)}</td>
           <td style="text-align:right;font-family:var(--font-display)">${txAmount(t.type, t.amount, fmt)}</td>
-          <td style="display:flex;gap:6px;">
-            <button class="btn-mini" data-edit="${t.id}">✏️</button>
-            <button class="btn-mini danger" data-delete="${t.id}">✕</button>
-        </td>
+          <td><div class="tx-actions">
+            <button class="btn-mini" data-edit="${t.id}" aria-label="Editar">✏️</button>
+            <button class="btn-mini danger" data-delete="${t.id}" aria-label="Eliminar">✕</button>
+          </div></td>
         </tr>`).join("")
-      : `<tr><td colspan="7" style="text-align:center;color:var(--text3);padding:40px">Sin transacciones</td></tr>`;
+      : `<tr><td colspan="8" style="text-align:center;color:var(--text3);padding:40px">Sin transacciones</td></tr>`;
 
     document.getElementById("tx-body").querySelectorAll("[data-delete]").forEach(btn =>
       btn.addEventListener("click", () => this.delete(btn.dataset.delete)));
@@ -66,6 +66,9 @@ export class TransactionsPage {
 
 
   _renderPagination(total, pages) {
+    this.pages = pages;
+    document.getElementById("btn-prev").disabled = this.page <= 1;
+    document.getElementById("btn-next").disabled = this.page >= pages;
     document.getElementById("tx-count-label").textContent =
       `${total.toLocaleString()} transacciones · Pág ${this.page} de ${pages}`;
   }
@@ -87,16 +90,11 @@ export class TransactionsPage {
       document.getElementById(id)?.addEventListener("change", () => { this.page = 1; this.render(); });
     });
     document.getElementById("btn-prev")?.addEventListener("click", () => { if (this.page > 1) { this.page--; this.render(); } });
-    document.getElementById("btn-next")?.addEventListener("click", () => { this.page++; this.render(); });
+    document.getElementById("btn-next")?.addEventListener("click", () => { if (this.page < (this.pages ?? 1)) { this.page++; this.render(); } });
     this._bindTipoChange();
   }
 
   _bindForm() {
-    document.getElementById("tx-tipo")?.addEventListener("change", () => {
-      const t = document.getElementById("tx-tipo").value;
-      document.getElementById("tx-destino-group").style.display =
-        ["transfer","invest","withdraw", "move"].includes(t) ? "" : "none";
-    });
     document.getElementById("btn-save-tx")?.addEventListener("click", () => this.save());
   }
 
@@ -107,7 +105,7 @@ export class TransactionsPage {
     await this.populateSelects();
     document.getElementById("tx-desc").value = "";
     document.getElementById("tx-valor").value = "";
-    document.getElementById("tx-fecha").value = new Date().toISOString().split("T")[0];
+    document.getElementById("tx-fecha").value = localISODate();
     document.getElementById("tx-tipo").value = "expense";
     document.getElementById("tx-destino-group").style.display = "none";
     this._onTipoChange();
@@ -208,6 +206,7 @@ export class TransactionsPage {
   }
 
   async delete(id) {
+    if (!confirm("¿Eliminar esta transacción?")) return;
     try {
       await api.transactions.delete(id);
       toast.show("Eliminada", "success");

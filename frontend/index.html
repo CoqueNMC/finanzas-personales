@@ -13,6 +13,7 @@
   <link rel="stylesheet" href="src/styles/sidebar.css">
   <link rel="stylesheet" href="src/styles/modal.css">
   <link rel="stylesheet" href="src/styles/toast.css">
+  <link rel="stylesheet" href="src/styles/responsive.css">
 </head>
 <body>
 
@@ -40,18 +41,22 @@
     <div style="font-size:13px;font-weight:500;color:var(--text)" id="user-name"></div>
     <div style="font-size:11px;color:var(--text3);margin-bottom:10px;" id="user-email"></div>
     <div style="display:flex;gap:6px;">
-      <button class="sidebar-btn" onclick="navigate('profile')" style="flex:1;">👤 Perfil</button>
+      <button class="sidebar-btn" data-page="profile" style="flex:1;">👤 Perfil</button>
       <button class="sidebar-btn" onclick="doLogout()" style="flex:1;">← Salir</button>
     </div>
   </div>
 </nav>
+<div class="sidebar-backdrop" id="sidebar-backdrop"></div>
 
 <!-- ── MAIN ── -->
 <div class="main" style="flex:1;overflow:hidden;display:flex;flex-direction:column;">
   <div class="topbar">
-    <div>
+    <div class="topbar-left">
+      <button class="menu-toggle" id="menu-toggle" aria-label="Mostrar u ocultar menú" aria-expanded="false">☰</button>
+      <div>
       <div class="topbar-title" id="page-title">Dashboard</div>
       <div class="topbar-sub" id="page-sub">Resumen financiero</div>
+      </div>
     </div>
     <div style="display:flex;gap:10px;align-items:center;">
       <button class="btn-primary" id="topbar-action">+ Transacción</button>
@@ -102,9 +107,9 @@
         <div class="card">
           <div class="section-header">
             <span class="section-title">Últimas transacciones</span>
-            <button class="btn-ghost" id="btn-ver-todas" style="font-size:12px;padding:5px 10px;")">Ver todas →</button>
+            <button class="btn-ghost" id="btn-ver-todas" style="font-size:12px;padding:5px 10px;">Ver todas →</button>
           </div>
-          <table class="tx-table" id="dash-recent"></table>
+          <div class="table-scroll"><table class="tx-table tx-table-compact" id="dash-recent"></table></div>
         </div>
         <div class="card">
           <div class="section-header"><span class="section-title">Gastos por categoría (mes)</span></div>
@@ -127,6 +132,7 @@
           <option value="income">Ingreso</option><option value="expense">Gasto efectivo</option>
           <option value="expense_tc">Gasto TC</option><option value="transfer">Pago TC</option>
           <option value="invest">Inversión</option><option value="withdraw">Retiro inversión</option>
+          <option value="move">Traslado</option>
         </select>
         <select class="filter-select" id="filter-account"><option value="">Todas las cuentas</option></select>
         <select class="filter-select" id="filter-cat"><option value="">Todas las categorías</option></select>
@@ -136,8 +142,8 @@
           <input class="filter-select" type="date" id="filter-date-to" title="Hasta">
         </div>
       </div>
-      <div class="card" style="padding:0;overflow:hidden;">
-        <table class="tx-table">
+      <div class="card table-scroll" style="padding:0;">
+        <table class="tx-table tx-table-full">
           <thead><tr><th>Fecha</th><th>Descripción</th><th>Categoría</th><th>Cuenta origen</th><th>Cuenta destino</th><th>Tipo</th><th style="text-align:right">Valor</th><th></th></tr></thead>
           <tbody id="tx-body"></tbody>
         </table>
@@ -163,7 +169,7 @@
     <div id="screen-categories" class="screen">
       <div class="section-header mb16">
         <span class="section-title">Categorías</span>
-        <button class="btn-primary btn-open-cat" id="btn-new-cat">+ Nueva categoría</button>
+        <button class="btn-primary" id="btn-new-cat">+ Nueva categoría</button>
       </div>
       <div class="grid-3" id="cat-grid"></div>
     </div>
@@ -196,7 +202,7 @@
     </div>
     <div class="form-row">
       <div class="form-group"><label class="form-label">Categoría</label><select class="form-select" id="tx-cat"></select></div>
-      <div class="form-group"><label class="form-label">Valor (COP)</label><input class="form-input" type="number" id="tx-valor" placeholder="0" min="0"></div>
+      <div class="form-group"><label class="form-label">Valor (COP)</label><input class="form-input" type="number" id="tx-valor" placeholder="0" min="0" inputmode="decimal"></div>
     </div>
     <div class="modal-actions">
       <button class="btn-ghost" onclick="
@@ -234,7 +240,7 @@
         <div class="color-opt" data-color="#c084fc" style="background:#c084fc"></div>
       </div>
     </div>
-    <div class="form-group"><label class="form-label">Saldo inicial (COP)</label><input class="form-input" type="number" id="acc-balance" placeholder="0"></div>
+    <div class="form-group"><label class="form-label">Saldo inicial (COP)</label><input class="form-input" type="number" id="acc-balance" placeholder="0" inputmode="decimal"></div>
     <input type="hidden" id="acc-edit-id">
     <div class="modal-actions">
       <button class="btn-ghost" onclick="document.getElementById('modal-account').classList.remove('open')">Cancelar</button>

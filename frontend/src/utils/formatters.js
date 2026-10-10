@@ -27,3 +27,11 @@ export const monthsBack = (n) => {
   }
   return result;
 };
+
+
+// Fecha local YYYY-MM-DD (toISOString usa UTC: en Colombia después de las 7pm da el día siguiente)
+export const localISODate = (d = new Date()) => {
+  const x = new Date(d);
+  x.setMinutes(x.getMinutes() - x.getTimezoneOffset());
+  return x.toISOString().slice(0, 10);
+};

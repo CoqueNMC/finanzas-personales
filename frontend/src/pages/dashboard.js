@@ -1,14 +1,17 @@
 import { api } from "../services/api.js";
-import { fmt, currentYearMonth } from "../utils/formatters.js";
+import { fmt, localISODate } from "../utils/formatters.js";
 import { txBadge, txAmount } from "../utils/badges.js";
 
 export class DashboardPage {
   constructor(chartsManager) {
     this.charts = chartsManager;
+    document.getElementById("btn-ver-todas")?.addEventListener("click", () => {
+      window.app.sidebar.navigate("transactions");
+    });
   }
 
   async render() {
-    const currentMonth = new Date().toISOString().slice(0, 7);
+    const currentMonth = localISODate().slice(0, 7);
   
     const [summary, accounts] = await Promise.all([
       api.dashboard.summary(currentMonth),
@@ -50,10 +53,6 @@ export class DashboardPage {
           <td style="text-align:right">${txAmount(t.type, t.amount, fmt)}</td>
         </tr>`).join("")
       : `<tr><td colspan="4" style="text-align:center;color:var(--text3);padding:24px">Sin transacciones</td></tr>`;
-  
-    document.getElementById("btn-ver-todas")?.addEventListener("click", () => {
-      window.app.sidebar.navigate("transactions");
-    });
   }
 
   _renderCatBars(cats = []) {

@@ -20,6 +20,8 @@ import { DashboardPage }    from "./pages/dashboard.js";
 import { AccountsPage }     from "./pages/accounts.js";
 import { TransactionsPage } from "./pages/transactions.js";
 import { CategoriesPage }   from "./pages/categories.js";
+import { api }              from "./services/api.js";
+import { toast }            from "./components/toast.js";
 
 const PAGE_CONFIG = {
   dashboard:    { title: "Dashboard",      sub: "Resumen financiero",  action: "Transacción" },
@@ -37,7 +39,6 @@ class App {
     this.accounts  = new AccountsPage();
     this.transactions = new TransactionsPage((count) => this.sidebar?.updateTxCount(count));
     this.categories = new CategoriesPage();
-	this.dashboard = new DashboardPage(this.charts, this);
 
     this.sidebar = new Sidebar((page) => this._onNavigate(page));
     this._currentPage = "dashboard";

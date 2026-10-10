@@ -7,6 +7,7 @@ export class CategoriesPage {
   constructor() {
     this.picker = new ColorPicker("cat-colors", "#22d48f");
     this._bindForm();
+    document.getElementById("btn-new-cat")?.addEventListener("click", () => this.openNew());
   }
 
   async render() {
@@ -28,7 +29,7 @@ export class CategoriesPage {
       btn.addEventListener("click", () => this.openEdit(btn.dataset.edit, cats)));
     document.getElementById("cat-grid").querySelectorAll("[data-delete]").forEach(btn =>
       btn.addEventListener("click", () => this.delete(btn.dataset.delete)));
-    document.querySelectorAll(".btn-open-cat").forEach(btn =>
+    document.getElementById("cat-grid").querySelectorAll(".btn-open-cat").forEach(btn =>
       btn.addEventListener("click", () => this.openNew())
 );
   }

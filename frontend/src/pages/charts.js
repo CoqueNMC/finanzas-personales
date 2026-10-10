@@ -1,5 +1,5 @@
 import { api } from "../services/api.js";
-import { fmt, monthsBack, currentYearMonth } from "../utils/formatters.js";
+import { fmt, localISODate } from "../utils/formatters.js";
 
 const CHART_DEFAULTS = {
   responsive: true,
@@ -16,7 +16,7 @@ const CHART_DEFAULTS = {
 const PIE_DEFAULTS = {
   responsive: true, maintainAspectRatio: false,
   plugins: {
-    legend: { position: "right", labels: { color: "rgba(255,255,255,0.5)", font: { family: "DM Sans", size: 11 }, boxWidth: 12 } },
+    legend: { position: window.matchMedia("(max-width: 600px)").matches ? "bottom" : "right", labels: { color: "rgba(255,255,255,0.5)", font: { family: "DM Sans", size: 11 }, boxWidth: 12 } },
     tooltip: { callbacks: { label: (c) => " " + fmt(c.raw) } },
   },
 };
@@ -45,8 +45,8 @@ export class ChartsManager {
   
     const fromDate = new Date();
     fromDate.setMonth(fromDate.getMonth() - months);
-    const dateFrom = fromDate.toISOString().split("T")[0];
-    const dateTo = new Date().toISOString().split("T")[0];
+    const dateFrom = localISODate(fromDate);
+    const dateTo = localISODate();
   
     const cats = await api.dashboard.expenses(dateFrom, dateTo);
   
