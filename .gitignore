@@ -23,3 +23,6 @@ Thumbs.db
 # Logs
 *.log
 scripts/carga_masiva_trans.py
+
+# Salidas de Claude
+Claude outputs/
