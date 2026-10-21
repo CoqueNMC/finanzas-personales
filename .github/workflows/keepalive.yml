@@ -1,0 +1,37 @@
+name: Keepalive Supabase y Render
+
+# Evita que Supabase pause el proyecto por inactividad (plan gratuito).
+# Escribe un latido en una tabla aparte (keepalive): NO toca transacciones ni cuentas.
+on:
+  schedule:
+    - cron: "17 13 * * *"   # todos los días, 8:17 a.m. hora Colombia (13:17 UTC)
+  workflow_dispatch:         # permite ejecutarlo a mano desde la pestaña Actions
+
+jobs:
+  keepalive:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Latido en Supabase
+        env:
+          DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+        run: |
+          pip install --quiet psycopg2-binary
+          python - <<'PY'
+          import os, psycopg2
+          conn = psycopg2.connect(os.environ["DB_URL"])
+          with conn, conn.cursor() as cur:
+              cur.execute("""
+                  CREATE TABLE IF NOT EXISTS keepalive (
+                      id SERIAL PRIMARY KEY,
+                      pinged_at TIMESTAMP NOT NULL DEFAULT NOW()
+                  )""")
+              cur.execute("INSERT INTO keepalive DEFAULT VALUES")
+              cur.execute("DELETE FROM keepalive WHERE pinged_at < NOW() - INTERVAL '30 days'")
+              cur.execute("SELECT COUNT(*) FROM keepalive")
+              print("Latido OK. Registros en keepalive:", cur.fetchone()[0])
+          conn.close()
+          PY
+
+      - name: Despertar backend en Render
+        continue-on-error: true
+        run: curl -fsS --max-time 90 --retry 2 https://finanzas-personales-uzs9.onrender.com/api/health
